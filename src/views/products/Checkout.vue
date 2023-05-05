@@ -311,7 +311,7 @@
                                         <small class="">{{ msm_error }} </small>
                                     </div>
 
-                                    <button v-if="!validSale && cart.length >= 1" type="button" class="btn btn-dark"  style="margin: 0 1.5rem;" v-on:click="mercadoPagoPref()">Realizar compra</button>
+                                    <button v-if="!validSale && cart.length >= 1" type="button" class="btn btn-dark"  style="margin: 0 1.5rem;" v-on:click="createSale()">Realizar compra</button>
                                     <template v-if="validSale">
                                         <div>
                                             <div class="row">
@@ -356,7 +356,10 @@ export default {
             valid: true,
             validSale: false,
             USDData: {},
-            USDEnabled: null
+            USDEnabled: null,
+            sale: {},
+            saleDetail: [],
+            saleID: ''
         }
     },
     beforeMount(){
@@ -397,6 +400,7 @@ export default {
             }
             const getUser = JSON.parse(localStorage.getItem('data_shopuser'))
             const user = getUser[1]
+
             axios.get(this.$url+'/cart/get/'+user, {
                 headers: {
                     "Content-Type": 'application/json',
@@ -432,12 +436,25 @@ export default {
                             unit_price: item.product.price, 
                         }) 
                     }
-                                       
+
+                    this.saleDetail.push({
+                        subtotal: subtotal,
+                        unitPrice: item.product.price,
+                        items: item.amountOfProducts,
+                        client: user,
+                        product: item.product._id,
+                        variant: item.variant._id
+                    })
                 }
+
                 if(this.USDEnabled == false){
                     this.total = this.total * this.USDData.value
                 }
+
+                this.sale.total = this.total
+                this.sale.client = user
                 this.getShippingMethods()
+
             }).catch( error => {
                 console.log(error.response.data.msg)
                 this.msm_error = error.response.data.msg
@@ -485,7 +502,7 @@ export default {
         selectDirection(id){
             this.sell.address = id.target.value
         },
-        mercadoPagoPref(){
+        createSale(){
             if(this.sell.address === undefined){
                 this.valid = false
                 this.msm_error = 'Seleccioná un domicilio de entrega'
@@ -496,7 +513,34 @@ export default {
                 this.msm_error = 'Seleccioná un método de envío'
                 return
             }
+            this.sale.shippingPrice = this.shippingCost
+            this.sale.shipMethod = this.shipMethodSelected
+            this.sale.saleDetail = this.saleDetail
+            this.sale.address = this.sell.address
             
+            const token = localStorage.getItem('token_shopuser')
+            axios.post(this.$url+'/sales/save', this.sale, {
+                headers: {
+                    "Content-Type": 'application/json',
+                    "Authorization" : `Bearer ${token}`
+                }
+            }).then((response) => {
+                const {data} = response
+                this.$socket.emit('sendCart', true)
+                this.validSale = true
+                console.log(data)
+                this.saleID = data._id
+                this.mercadoPagoPref()
+
+                /*setTimeout(() => {
+                    this.$router.push({name: 'order', params: {id:data._id}})
+                }, 2000);*/
+            }).catch( error => {
+                console.log(error.response.data.msg)
+            }) 
+        },
+
+        mercadoPagoPref(){
             if(this.shippingCost > 0){
                 this.items.push({
                     title: 'Envío',
@@ -506,7 +550,8 @@ export default {
                     unit_price: this.shippingCost,
                 })
             }
-
+            const getUser = JSON.parse(localStorage.getItem('data_shopuser'))
+            const user = getUser[1]
             this.valid = true
             this.validSale = true
             const data = {
@@ -516,13 +561,15 @@ export default {
                     failure: `${this.$frontendURL}/verify/failure`
                 },
                 items: this.items,
+                // ADD saleID IN METADATA //
+                metadata: {clientID:user, saleID: this.saleID },
                 auto_return: 'approved'
             }
 			console.log(data);
             axios.post('https://api.mercadopago.com/checkout/preferences', data, {
                 headers: {
                     "Content-Type": 'application/json',
-                    "Authorization" : `Bearer TEST-8345754408126296-011013-80551365f23e905a81e45c9b2e873d68-172136330`
+                    "Authorization" : 'Bearer TEST-4373948009132150-042809-2cfe84e84e2a6d0601b54c35bc8f5881-172136330'
                 }
             }).then((response) => {
               const {data} = response
@@ -534,6 +581,7 @@ export default {
               console.log(error.response.data.msg)
             }) 
         },
+
         getShippingMethods(){
             let id
             if(this.cart[0]){
@@ -572,7 +620,6 @@ export default {
                 if(this.USDData.enabled === false){
                     this.USDEnabled = false
                 }
-                console.log(this.USDData);
             }).catch( error => {
                 console.log(error)
                 console.log(error.response.data.msg)
