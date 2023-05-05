@@ -513,6 +513,7 @@ export default {
                 this.msm_error = 'Seleccioná un método de envío'
                 return
             }
+            this.validSale = true
             this.sale.shippingPrice = this.shippingCost
             this.sale.shipMethod = this.shipMethodSelected
             this.sale.saleDetail = this.saleDetail
@@ -575,6 +576,7 @@ export default {
               const {data} = response
               console.log(data);
               /* window.location.href = data.sandbox_init_point+'?ShipM='+this.shipMethodSelected*/
+              this.validSale = false
 			  window.location.href = data.init_point
 
             }).catch( error => {

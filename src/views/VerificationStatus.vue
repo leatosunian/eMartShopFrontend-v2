@@ -67,9 +67,6 @@ export default {
         this.payment_id = this.$route.query.payment_id 
         this.sale.transaction = this.payment_id 
 
-        this.getCart()
-        this.getPayment(this.payment_id)
-
         if(this.$route.params.address){
             this.address = this.$route.params.address
             this.sale.address = this.address
@@ -84,6 +81,7 @@ export default {
             this.status.title = "Pago aprobado"
             this.status.subtitle = '¡El pago ha sido efectuado correctamente!'
             this.status.icon = '/assets/icons/checked.png'
+            this.getSale(this.payment_id)
         }
         if(this.$route.params.status === 'pending'){
             this.status.title = 'Pendiente de pago'
@@ -102,25 +100,7 @@ export default {
         
      },
     methods: {
-        getPayment(payment_id){
-            this.payment_id
-            axios.get('https://api.mercadopago.com/v1/payments/'+payment_id, {
-                headers: {
-                    "Content-Type": 'application/json',
-                    "Authorization" : `Bearer APP_USR-8345754408126296-011013-ee93ef49ba895d5a6ca77a7907cd8b50-172136330`
-                }
-            }).then((response) => {
-              const {data} = response
-              this.payment = data
-              if(this.payment.status === 'approved'){
-                this.validateSale(this.payment_id)
-              }
-            }).catch( error => {
-              console.log(error.response.data.msg)
-            }) 
-        },
-
-        validateSale(payment_id){
+        getSale(payment_id){
             const token = localStorage.getItem('token_shopuser')
             axios.get(this.$url+'/sales/get/'+payment_id, {
                 headers: {
@@ -129,76 +109,14 @@ export default {
                 }
             }).then((response) => {
               const {data} = response
-              if(data.length >= 1){
-                return // no se hace la venta //
-              }
-              if(data.length === 0){
-                setTimeout(() => {
-                    this.createSale()
-                }, 1000);
-              }
-            }).catch( error => {
-              console.log(error.response.data.msg)
-            }) 
-        },
-
-        getCart(){
-            const token = localStorage.getItem('token_shopuser')
-            const getUser = JSON.parse(localStorage.getItem('data_shopuser'))
-            const user = getUser[1]
-            axios.get(this.$url+'/cart/get/'+user, {
-                headers: {
-                    "Content-Type": 'application/json',
-                    "Authorization": `Bearer ${token}`
-                }
-            }).then((response) => {
-                this.total = 0
-                const {data} = response
-                this.cart = data
-
-                for(const item of data){
-                    const subtotal = item.product.price * item.amountOfProducts
-                    this.total = this.total + subtotal
-
-                    this.saleDetail.push({
-                        subtotal: subtotal,
-                        unitPrice: item.product.price,
-                        items: item.amountOfProducts,
-                        client: user,
-                        product: item.product._id,
-                        variant: item.variant._id
-                    })
-                }
-                this.sale.status = this.payment.status
-                this.sale.total = this.total
-                this.sale.client = user
-               
-            }).catch( error => {
-                console.log(error.response.data.msg)
-            })  
-        },
-
-        createSale(){
-            this.sale.shippingPrice = this.$route.params.shippingCost
-            this.sale.shipMethod = this.$route.params.shipMethod
-            this.sale.saleDetail = this.saleDetail
-            const token = localStorage.getItem('token_shopuser')
-            axios.post(this.$url+'/sales/save', this.sale, {
-                headers: {
-                    "Content-Type": 'application/json',
-                    "Authorization" : `Bearer ${token}`
-                }
-            }).then((response) => {
-              const {data} = response
-              this.$socket.emit('sendCart', true)
-              this.validSale = true
               setTimeout(() => {
                 this.$router.push({name: 'order', params: {id:data._id}})
-              }, 2000);
+              }, 3000);
             }).catch( error => {
               console.log(error.response.data.msg)
             }) 
-        }
+        },
+
     }
 }
 </script>
