@@ -111,7 +111,7 @@ export default {
               const {data} = response
               console.log(data)
               setTimeout(() => {
-                this.$router.push({name: 'order', params: {id:data._id}})
+                this.$router.push({name: 'order', params: {id:data[0]._id}})
               }, 3000);
             }).catch( error => {
               console.log(error.response.data.msg)
