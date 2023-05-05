@@ -109,6 +109,7 @@ export default {
                 }
             }).then((response) => {
               const {data} = response
+              console.log(data)
               setTimeout(() => {
                 this.$router.push({name: 'order', params: {id:data._id}})
               }, 3000);
@@ -116,7 +117,6 @@ export default {
               console.log(error.response.data.msg)
             }) 
         },
-
     }
 }
 </script>
