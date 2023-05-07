@@ -490,6 +490,7 @@
   </div>
 </template>
 
+
 <script>
 import noUiSlider from '../../../public/assets/js/nouislider.min.mjs'
 import currencyFormatter from 'currency-formatter'
@@ -699,6 +700,10 @@ export default {
 </script>
 
 <style>
+    .product-image {
+      height: 190px !important;
+    }
+
     .sidebar-menu-item[data-bs-toggle="collapse"]::before{
         display: none !important;
     }
