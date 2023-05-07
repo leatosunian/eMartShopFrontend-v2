@@ -50,11 +50,13 @@
                               </div>
                             </div>
                           </div>
-                          <div class="col-2">{{priceConverter(item.unitPrice)}}</div>
+                          <div v-if="USDEnabled === false" class="col-2">{{priceConverter(item.unitPrice*USDData.value)}}</div>
+                          <div v-if="USDEnabled === true" class="col-2">{{priceConverter(item.unitPrice)}}</div>
                           <div class="col-2">
                             {{item.items}}
                           </div>
-                          <div class="text-center col-2">{{priceConverter(item.unitPrice*item.items)}}</div>
+                          <div v-if="USDEnabled === false" class="text-center col-2">{{priceConverter(item.unitPrice*item.items*USDData.value)}}</div>
+                          <div v-if="USDEnabled === true" class="text-center col-2">{{priceConverter(item.unitPrice*item.items)}}</div>
                         </div>
                       </div>
                       <!-- Product-->
@@ -133,7 +135,9 @@ export default {
         return {
           products: [],
           address: {},
-          saleData: {}
+          saleData: {},
+          USDData: {},
+          USDEnabled: null,
         }
     },
     mounted(){
@@ -141,12 +145,30 @@ export default {
     },
     beforeMount(){
         this.getPurchaseData()
+        this.getUSDSettings()
     },
     methods: {
       priceConverter(price){
             return currencyFormatter.format(price, { code: 'ARS' });
       },
-
+      getUSDSettings(){
+        axios.get(`${this.$url}/public/getusdsettings`, {
+            headers: {
+                "Content-Type": 'application/json',
+            }
+        }).then((response) => {
+            this.USDData = response.data[0]
+            if(this.USDData.enabled === true){
+                this.USDEnabled = true
+            }
+            if(this.USDData.enabled === false){
+                this.USDEnabled = false
+            }
+        }).catch( error => {
+            console.log(error)
+            console.log(error.response.data.msg)
+        })
+      },
       getPurchaseData(){
         var loader = this.$loading.show({
           container: this.fullPage ? null : this.$refs.formContainer,

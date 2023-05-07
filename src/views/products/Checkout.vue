@@ -562,15 +562,14 @@ export default {
                     failure: `${this.$frontendURL}/verify/failure`
                 },
                 items: this.items,
-                // ADD saleID IN METADATA //
-                metadata: {clientID:user, saleID: this.saleID },
+                metadata: { clientID:user, saleID: this.saleID },
                 auto_return: 'approved'
             }
 			console.log(data);
             axios.post('https://api.mercadopago.com/checkout/preferences', data, {
                 headers: {
                     "Content-Type": 'application/json',
-                    "Authorization" : 'Bearer TEST-4373948009132150-042809-2cfe84e84e2a6d0601b54c35bc8f5881-172136330'
+                    "Authorization" : `Bearer ${this.$MPKeyAuth}`
                 }
             }).then((response) => {
               const {data} = response

@@ -15,7 +15,8 @@ const socketConnection = SocketIO(process.env.VUE_APP_SOCKET_IO_URL)
 Vue.config.productionTip = false
 Vue.prototype.$url = process.env.VUE_APP_BACKEND_URL
 Vue.prototype.$frontendURL = process.env.VUE_APP_FRONTEND_URL
-Vue.prototype.$shipping = 783
+Vue.prototype.$MPKeyAuth = process.env.VUE_APP_MPKEYAUTH
+
 Vue.use(BootstrapVue)
 Vue.use(Loading);
 Vue.use(new VueSocketIO({
