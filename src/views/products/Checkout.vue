@@ -569,7 +569,7 @@ export default {
             axios.post('https://api.mercadopago.com/checkout/preferences', data, {
                 headers: {
                     "Content-Type": 'application/json',
-                    "Authorization" : `Bearer ${this.$MPKeyAuth}`
+                    "Authorization" : `Bearer ${this.$VUE_APP_MPKEYAUTH}`
                 }
             }).then((response) => {
               const {data} = response
