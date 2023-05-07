@@ -566,10 +566,11 @@ export default {
                 auto_return: 'approved'
             }
 			console.log(data);
+            console.log(this.$MPKeyAuth)
             axios.post('https://api.mercadopago.com/checkout/preferences', data, {
                 headers: {
                     "Content-Type": 'application/json',
-                    "Authorization" : `Bearer ${this.$VUE_APP_MPKEYAUTH}`
+                    "Authorization" : `Bearer ${this.$MPKeyAuth}`
                 }
             }).then((response) => {
               const {data} = response
