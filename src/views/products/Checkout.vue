@@ -576,6 +576,7 @@ export default {
               console.log(data);
               /* window.location.href = data.sandbox_init_point+'?ShipM='+this.shipMethodSelected*/
               this.validSale = false
+              this.$socket.emit('sendCart', true)
 			  window.location.href = data.init_point
 
             }).catch( error => {
