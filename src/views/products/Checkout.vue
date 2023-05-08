@@ -164,10 +164,6 @@
                                         <p style="font-weight:400; font-size: 17px;">Comprá y recibí tu pedido sin moverte de tu casa dentro de las 72hs hábiles. Realizamos envíos a todo el país a través de {{ shipMethods.shippingCompany }}. Cuando despachemos el pedido te enviaremos un Nº de seguimiento para que rastrees tu orden.</p>
                                     </span>
                                     <span style="font-weight:600; font-size: 18px;">
-                                        - Retirá por sucursal {{shipMethods.shippingCompany}}
-                                        <p style="font-weight:400; font-size: 17px;">Podés retirar tu pedido en la sucursal de {{ shipMethods.shippingCompany }} de tu localidad. Realizamos envíos a todo el país a través de {{ shipMethods.shippingCompany }}. Cuando despachemos el pedido te enviaremos un Nº de seguimiento para que rastrees tu orden.</p>
-                                    </span>
-                                    <span style="font-weight:600; font-size: 18px;">
                                         - Retirá por nuestra sucursal
                                         <p style="font-weight:400; font-size: 17px;">Podés acercarte a nuestra sucursal luego de hacer la compra y retirar tu pedido sin cargo.</p>
                                     </span>
@@ -179,33 +175,24 @@
                                     </div>
                                   </template>
                                 </b-modal>
-
-
                             </div>
 
                             <div class="" style="display:flex; justify-content:left; width:100%;" v-if="!freeShipping">
-									<div class="shipType">
+								<div class="shipType">
                                     
                                     <div style="border: 1px solid rgba(0, 0, 0, 0.18); border-radius: 8px; padding: 6px 10px; display: flex; align-items:center; justify-content:space-between; gap:10px;">
                                         <span>Envío a domicilio</span>
                                         <input type="radio" v-model="shippingCost" v-on:click="selectShipMethod($event)" :value="shipMethods.toAddress" name="shippingMethod" id="toAddress" style="width:18px; height:18px;">
                                     </div>
-                        
-                                    <div style="border: 1px solid rgba(0, 0, 0, 0.18); border-radius: 8px; padding: 6px 10px; display: flex; align-items:center; justify-content:space-between; gap:10px;">
-                                        <span>Retiro por sucursal {{ shipMethods.shippingCompany }} </span>
-                                        <input type="radio" v-model="shippingCost" v-on:click="selectShipMethod($event)" :value="shipMethods.toShipperBranch" name="shippingMethod" id="toShipperBranch" style="width:18px; height:18px;">
-                                    </div>
-            
+                                    
                                     <div v-if="shipMethods.toBranch === 'Permitido'" style="border: 1px solid rgba(0, 0, 0, 0.18); border-radius: 8px; padding: 6px 10px; display: flex; align-items:center; justify-content:space-between; gap:10px;">
                                         <span>Retiro por nuestra sucursal</span>
                                         <input type="radio" v-model="shippingCost" v-on:click="selectShipMethod($event)" value="0" name="shippingMethod" id="toBranch" style="width:18px; height:18px;">
                                     </div>
                                  
                                 </div>
-                                
                             </div>
 
-							
                             <div class="" style="display:flex; justify-content:center; width:100%;" v-if="freeShipping">
 							    <div style="display:flex; justify-content:left; width:100%; padding-left:24px; gap:10px">
                                     
@@ -213,12 +200,7 @@
                                         <span>Envío a domicilio</span>
                                         <input type="radio"  v-on:click="selectShipMethodFree($event)"  name="shippingMethod2" id="toAddress" style="width:18px; height:18px;">
                                     </div>
-                        
-                                    <div style="border: 1px solid rgba(0, 0, 0, 0.18); border-radius: 8px; padding: 6px 10px; display: flex; align-items:center; justify-content:space-between; gap:10px;">
-                                        <span>Retiro por sucursal {{ shipMethods.shippingCompany }} </span>
-                                        <input type="radio"  v-on:click="selectShipMethodFree($event)" value="" name="shippingMethod2" id="toShipperBranch" style="width:18px; height:18px;">
-                                    </div>
-            
+
                                     <div v-if="shipMethods.toBranch === 'Permitido'" style="border: 1px solid rgba(0, 0, 0, 0.18); border-radius: 8px; padding: 6px 10px; display: flex; align-items:center; justify-content:space-between; gap:10px;">
                                         <span>Retiro por nuestra sucursal</span>
                                         <input type="radio"  v-on:click="selectShipMethodFree($event)" value="0" name="shippingMethod2" id="toBranch" style="width:18px; height:18px;">
