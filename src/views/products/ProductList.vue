@@ -700,8 +700,9 @@ export default {
 </script>
 
 <style>
+
     .product-image {
-      height: 190px !important;
+      height: fit-content !important;
     }
 
     .sidebar-menu-item[data-bs-toggle="collapse"]::before{
